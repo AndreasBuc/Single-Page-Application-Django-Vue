@@ -58,5 +58,6 @@ urlpatterns = [
     path("api/rest-auth/registration/",
          include("rest_auth.registration.urls")),
 
+    # Dieser Ausdruck r'^.*$' fängt alle URLS ab, die sonst nirgendswo hingehören.
     re_path(r'^.*$', IndexTemplateView.as_view(), name='entry-point'),
 ]
