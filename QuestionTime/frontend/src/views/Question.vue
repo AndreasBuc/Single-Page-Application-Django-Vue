@@ -2,6 +2,9 @@
   <div class="single-question mt-2">
     <div class="container">
       <h1>{{question.content}}</h1>
+      <QuestionActions
+      v-if="isQuestionAuthor"
+      :slug="question.slug"/>
       <p class="mb-0"> Posted by:
         <span class = "author">{{question.author}}</span>
       </p>
@@ -41,7 +44,11 @@
     <hr>
     </div>
     <div class="container">
-      <AnswerComponent v-for="(answer, index) in answers" :answer="answer" :key="index"/>
+      <AnswerComponent  v-for="(answer, index) in answers"
+                        :answer="answer"
+                        :key="index"
+                        :requestUser="requestUser"
+                        @delete-answer="deleteAnswer"/>
       <div class="my-4">
         <p v-show="loadingAnswers">...loading...</p>
         <button class="btn btn-sm btn-outline-dark" v-show="next" @click="getQuestionAnswers">get more answers</button>
@@ -52,7 +59,8 @@
 
 <script>
   import { apiService } from "@/common/api.service.js";
-  import AnswerComponent from "@/components/Answer.vue"
+  import AnswerComponent from "@/components/Answer.vue";
+  import QuestionActions from "@/components/QuestionsActions.vue";
   export default {
     name: "Question",
     props: {
@@ -62,7 +70,8 @@
       }
     },
     components: {
-      AnswerComponent
+      AnswerComponent,
+      QuestionActions
     },
     data(){
       return {
@@ -74,11 +83,20 @@
         showForm: false,
         next: null,
         loadingAnswers: false,
+        requestUser: null,
+      }
+    },
+    computed: {
+      isQuestionAuthor() {
+        return this.question.author === this.requestUser;
       }
     },
     methods: {
       setPageTitle(title) {
         document.title = title;
+      },
+      setRequestUser() {
+        this.requestUser = window.localStorage.getItem("username");
       },
       getQuestionData(){
         let endpoint = `/api/questions/${this.slug}/`;
@@ -94,6 +112,7 @@
         if (this.next) {
           endpoint = this.next;
         }
+        this.loadingAnswers = true;
         apiService(endpoint)
           .then(data => {
             this.answers.push(...data.results);
@@ -123,11 +142,23 @@
         } else {
           this.error = "You cannot send an empty answer!"
         }
+      },
+      async deleteAnswer(answer) {
+        let endpoint = `/api/answers/${answer.id}/`;
+        try {
+          await apiService(endpoint, "DELETE")
+          this.$delete(this.answers, this.answers.indexOf(answer))
+          this.userHasAnswered = false;
+        }
+        catch (err) {
+          console.log(err)
+        }
       }
     },
   created() {
     this.getQuestionData()
     this.getQuestionAnswers()
+    this.setRequestUser()
   }
   };
 </script>
