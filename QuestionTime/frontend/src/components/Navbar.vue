@@ -27,7 +27,7 @@
           <li class="nav-item active">
             <router-link
               class = "nav-link"
-              :to="{ name: 'home' }"
+              :to="{ name: 'question-editor' }"
               >Ask Question
             </router-link>
           </li>
