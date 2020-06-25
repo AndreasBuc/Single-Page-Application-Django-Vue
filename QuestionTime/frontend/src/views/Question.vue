@@ -1,6 +1,6 @@
 <template>
   <div class="single-question mt-2">
-    <div class="container">
+    <div v-if="question" class="container">
       <h1>{{question.content}}</h1>
       <QuestionActions
       v-if="isQuestionAuthor"
@@ -43,10 +43,13 @@
 
     <hr>
     </div>
-    <div class="container">
-      <AnswerComponent  v-for="(answer, index) in answers"
+    <div v-else>
+      <h1 id="notfound">404 - Question not found</h1>
+    </div>
+    <div v-if="question" class="container">
+      <AnswerComponent  v-for="answer in answers"
                         :answer="answer"
-                        :key="index"
+                        :key="answer.id"
                         :requestUser="requestUser"
                         @delete-answer="deleteAnswer"/>
       <div class="my-4">
@@ -102,9 +105,14 @@
         let endpoint = `/api/questions/${this.slug}/`;
         apiService(endpoint)
           .then(data => {
-            this.question = data;
-            this.userHasAnswered = data.user_has_answered;
-            this.setPageTitle(data.content)
+            if (data) {
+              this.question = data;
+              this.userHasAnswered = data.user_has_answered;
+              this.setPageTitle(data.content)
+            } else {
+              this.question = null;
+              this.setPageTitle("404 - Page not Found")
+            }
         })
       },
       getQuestionAnswers() {
@@ -175,4 +183,10 @@
     font-weight: bold;
     color: #ee4035;
   }
+
+  #notfound{
+    color: red;
+    text-align: center;
+  }
+
 </style>

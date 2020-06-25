@@ -1,10 +1,10 @@
 <template>
   <div class="questions-actions">
-    <!-- <router-link
-      :to="{ name: 'answer-editor', params: { id: answer.id } }"
+    <router-link
+      :to="{ name: 'question-editor', params: { slug: slug } }"
       class="btn btn-sm btn-outline-secondary mr-1"
       >Edit
-    </router-link> -->
+    </router-link>
 
     <button
       @click="deleteQuestion"
