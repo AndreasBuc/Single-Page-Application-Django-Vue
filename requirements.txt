@@ -21,6 +21,6 @@ requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1592425495
 requests-oauthlib==1.2.0
 six @ file:///home/conda/feedstock_root/build_artifacts/six_1590081179328/work
 sqlparse==0.3.1
-urllib3==1.25.9
+urllib3==1.26.5
 win-inet-pton==1.1.0
 wincertstore==0.2
